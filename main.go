@@ -96,17 +96,25 @@ func main() {
 			}
 		}()
 	}
+	var NullCatalog []*Catalog
 	for i := 0; i < len(catalog); i++ {
 		jobsChan <- i
 		wg.Add(1)
 		log.Println("开始下载章节:", catalog[i].Title, "共", len(catalog[i].ImgArr), "页")
 		if len(catalog[i].ImgArr) == 0 {
+			NullCatalog = append(NullCatalog, catalog[i])
 			log.Println("图片目录为空..........")
 		}
 	}
 	wg.Wait()
 	time.Sleep(time.Second)
 	log.Println("下载完成")
+	if len(NullCatalog) > 0 {
+		log.Println("以下章节下载失败,请前往扑飞漫画查看")
+		for _, v := range NullCatalog {
+			log.Println(v.Title, ":", v.Url)
+		}
+	}
 }
 
 // 获取该章节所有图片地址
